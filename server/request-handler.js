@@ -45,7 +45,6 @@ var requestHandler = function(request, response) {
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
-  console.log(request.url.slice(8));
 
   if (request.url.slice(0,8) === '/classes') {
 
@@ -58,12 +57,14 @@ var requestHandler = function(request, response) {
         body = JSON.parse(body);
         
       }).on('end', function(){
-        msg.addMessage(body.username, body.message)
+        msg.addMessage(body.username, body.text)
         result = JSON.stringify(msg.getMessages());
+
         console.log('this is the body', body.username)
       })
     } else if (request.method = 'GET'){
       result = JSON.stringify(msg.getMessages())
+      
       statusCode = 200;
     }
   }
