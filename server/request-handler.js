@@ -12,6 +12,11 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
+ var msg = require('./message.js');
+
+ var url = require('url');
+
+
 var requestHandler = function(request, response) {
 
   // Request and Response come from node's http module.
@@ -28,31 +33,42 @@ var requestHandler = function(request, response) {
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
+
   console.log("Serving request type " + request.method + " for url " + request.url);
 
   // The outgoing status.
   var statusCode = 200;
-  var result
+  var result;
+  var body = '';
 
 
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
-  var json = {
-    anObject : 'ello world',
-    results : []
-  };
 
-  if(request.method === 'POST'){
-    request.on('data', function(data){
-      var message = data.toString()
-      json.results.push(message);
-    })
-    statusCode = 201;
+  if (request.url === '/classes/messages') {
+    if(request.method === 'POST'){
+      statusCode = 201;
+      var message;
 
-  } else if (request.method = 'GET'){
-    result = JSON.stringify(json);
+      request.on('data', function(chunk){
+        body += chunk
+        body = JSON.parse(body);
+        
+      }).on('end', function(){
+        msg.addMessage(body.username, body.message)
+        result = JSON.stringify(msg.getMessages());
+      })
+    } else if (request.method = 'GET'){
+      result = JSON.stringify(msg.getMessages())
+    }
   }
+  else {
+    statusCode = 404;
+  }
+
+
+
 
   // Tell the client we are sending them plain text.
   //
