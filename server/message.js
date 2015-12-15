@@ -2,13 +2,13 @@ var Messages = function(){
   this.results = [];
 };
 
-Messages.prototype.addMessage = function(username, message){
-  var content = {
+Messages.prototype.addMessage = function(username, content){
+  var container = {
     username : username,
-    message : message,
+    message : content,
     //postedAt : new Date()
   }
-  this.results.push(content);
+  this.results.push(container);
 }
 
 Messages.prototype.getMessages = function(){
